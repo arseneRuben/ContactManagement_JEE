@@ -62,4 +62,16 @@ public class Contact {
         this.emails = emails;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString(){
+        return this.id + " " + this.name + " " + this.phoneNumbers.size() + " " + this.emails.size();
+    }
 }

@@ -45,6 +45,16 @@ public class ContactManager {
         return contacts;
     }
     
+    static Contact findById(int id){
+        Contact output = null;
+        for(Contact c : ContactManager.contacts){
+            if(c.getId()==id){
+                output = c;
+            }
+        }
+        return output;
+    }
+    
     public static void main(String args[]){
         System.out.print(ContactManager.findAll());
     }
