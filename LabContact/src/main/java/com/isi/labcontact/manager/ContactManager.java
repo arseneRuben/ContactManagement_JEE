@@ -81,6 +81,30 @@ public class ContactManager extends Manager {
     }
 
     public static void main(String args[]) {
-        System.out.print(ContactManager.findById(1));
+        Contact c = ContactManager.findById(2);
+        System.out.print(c);
+        c.setName("Simom");
+        ContactManager.update(c);
+        c = ContactManager.findById(2);
+        System.out.print(c);
+
+    }
+
+    public static int update(Contact c) {
+        int result = -1;
+        String query = "UPDATE  contacts SET name=? WHERE id=?;";
+        try {
+            connexion = DriverManager.getConnection(urlServeur, username, password);
+            PreparedStatement ps = connexion.prepareStatement(query);
+            ps.setString(1, c.getName());
+            ps.setInt(2, c.getId());
+            result = ps.executeUpdate();
+            if (connexion != null) {
+                connexion.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
     }
 }
