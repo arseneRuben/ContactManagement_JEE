@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @WebServlet(name = "ContactServlet", urlPatterns = {"/contactServlet"})
 public class ContactServlet extends HttpServlet {
@@ -17,12 +18,15 @@ public class ContactServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-           List<Contact> contacts;
-           if(ContactManager.findAll()!=null){
-               contacts=ContactManager.findAll();
-               request.setAttribute("contacts", contacts); 
-               request.getRequestDispatcher("contact.jsp").forward(request, response);
-           }
+        List<Contact> contacts;
+        HttpSession session = request.getSession(true);
+        if (session != null) {
+            if (ContactManager.findAll() != null) {
+                contacts = ContactManager.findAll();
+                session.setAttribute("contacts", contacts);
+                request.getRequestDispatcher("contact.jsp").forward(request, response);
+            }
+        }
     }
 
     @Override
