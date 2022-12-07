@@ -4,7 +4,8 @@ import com.isi.labcontact.entity.Contact;
 import com.isi.labcontact.manager.ContactManager;
 import java.io.IOException;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,16 +17,12 @@ import javax.servlet.http.HttpSession;
 public class ContactServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List<Contact> contacts;
-        HttpSession session = request.getSession(true);
-        if (session != null) {
-            if (ContactManager.findAll() != null) {
-                contacts = ContactManager.findAll();
-                session.setAttribute("contacts", contacts);
-                request.getRequestDispatcher("contact.jsp").forward(request, response);
-            }
+        if (req.getParameter("nom") != null) {
+            this.index(req, resp);
+        } else {
+            this.show(req, resp);
         }
     }
 
@@ -39,4 +36,29 @@ public class ContactServlet extends HttpServlet {
 
     }
 
+    protected void index(HttpServletRequest req, HttpServletResponse resp) {
+        if (ContactManager.findAll() != null) {
+            List<Contact> contacts;
+            HttpSession session = req.getSession(true);
+            contacts = ContactManager.findAll();
+            session.setAttribute("contacts", contacts);
+            try {
+                req.getRequestDispatcher("contact.jsp").forward(req, resp);
+            } catch (ServletException | IOException ex) {
+                Logger.getLogger(ContactServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+    }
+
+    protected void show(HttpServletRequest req, HttpServletResponse resp) {
+        req.setAttribute("contact", ContactManager.findById(Integer.parseInt(req.getParameter("id"))));
+        try {
+            req.getRequestDispatcher("contact.jsp").forward(req, resp);
+        } catch (ServletException | IOException ex) {
+            Logger.getLogger(ContactServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 }
