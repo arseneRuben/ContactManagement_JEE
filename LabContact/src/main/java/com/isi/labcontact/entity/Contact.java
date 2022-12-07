@@ -32,6 +32,13 @@ public class Contact {
         this.emails = new ArrayList<Email>();
     }
 
+    public Contact(int id, String name) {
+        this.id = id;
+        this.name = name;
+        this.phoneNumbers = new ArrayList<PhoneNumber>();
+        this.emails = new ArrayList<Email>();
+    }
+
     public Contact(String name, List<PhoneNumber> phoneNumbers, List<Email> emails) {
         this.name = name;
         this.phoneNumbers = phoneNumbers;
@@ -71,7 +78,7 @@ public class Contact {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.id + " " + this.name + " " + this.phoneNumbers.size() + " " + this.emails.size();
     }
 }
