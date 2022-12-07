@@ -27,6 +27,18 @@ public class ContactServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        
+        String action = req.getParameter("action");
+        
+        // afficher tous les contacts
+        
+        // afficher un contact par id
+        
+        // modifier un contact par id
+        
+        // ajouter un nouveau contact
+        
+        
         if (req.getParameter("nom") != null) {
             this.index(req, resp);
         } else {
@@ -37,6 +49,26 @@ public class ContactServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        String action = request.getParameter("action");
+        
+        if("deleteContact".equals(action)){
+        //supprimer un contact par id
+        
+        }
+        else if("editContactName".equals(action)){
+        //ajouter le nom du contact dans la session
+        }
+        
+        
+        
+        
+        //ajouter un email dans la session
+        
+        //ajouter un telephone dans la session        
+        
+        //sauvegarder le contact en session dans la base de donnees
+        
         String name = request.getParameter("nom");
         String email = request.getParameter("courriel");
         String emailType = request.getParameter("typeCourriel");
