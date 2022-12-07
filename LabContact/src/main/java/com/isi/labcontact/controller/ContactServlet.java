@@ -1,8 +1,12 @@
 package com.isi.labcontact.controller;
 
 import com.isi.labcontact.entity.Contact;
+import com.isi.labcontact.entity.Email;
+import com.isi.labcontact.entity.PhoneNumber;
 import com.isi.labcontact.manager.ContactManager;
 import java.io.IOException;
+import static java.lang.Integer.parseInt;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +19,10 @@ import javax.servlet.http.HttpSession;
 
 @WebServlet(name = "ContactServlet", urlPatterns = {"/contactServlet"})
 public class ContactServlet extends HttpServlet {
+
+    HttpSession session;
+    List<PhoneNumber> phoneNumbers;
+    List<Email> emails;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -36,10 +44,19 @@ public class ContactServlet extends HttpServlet {
 
     }
 
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.phoneNumbers = new ArrayList<PhoneNumber>();
+        this.emails = new ArrayList<Email>();
+        session.setAttribute("phoneNumbers", this.phoneNumbers);
+        session.setAttribute("phoneNumbers", this.emails);
+    }
+
     protected void index(HttpServletRequest req, HttpServletResponse resp) {
         if (ContactManager.findAll() != null) {
             List<Contact> contacts;
-            HttpSession session = req.getSession(true);
+            this.session = req.getSession(true);
             contacts = ContactManager.findAll();
             session.setAttribute("contacts", contacts);
             try {
@@ -60,5 +77,27 @@ public class ContactServlet extends HttpServlet {
             Logger.getLogger(ContactServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    protected void updateContact(HttpServletRequest req, HttpServletResponse resp) {
+        int id = parseInt(req.getParameter("id"));
+        String name = req.getParameter("nom");
+        String email = req.getParameter("courriel");
+        String emailType = req.getParameter("typeCourriel");
+        String phoneType = req.getParameter("typePhone");
+        Contact contact = new Contact(id, name, phoneNumbers, emails);
+    }
+
+    protected void addPhoneNumber(HttpServletRequest req, HttpServletResponse resp) {
+        List<Email> emails = (ArrayList<Email>) this.session.getAttribute("emails");
+        int emailId = parseInt(req.getParameter("id"));
+        String email = req.getParameter("courriel");
+        String emailType = req.getParameter("typeCourriel");
+        Email e = new Email(emailId, email, 2, emailType);
+        emails.add(e);
+    }
+
+    protected void addEmail(HttpServletRequest req, HttpServletResponse resp) {
+        List<PhoneNumber> phoneNumbers = (ArrayList<PhoneNumber>) this.session.getAttribute("phoneNumbers");
     }
 }
