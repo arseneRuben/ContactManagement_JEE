@@ -27,8 +27,14 @@ public class ContactServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
-        String action = req.getParameter("action");
+        ArrayList<Contact> contacts = ContactManager.findAll();
+        req.setAttribute("contacts",contacts );
+        req.getRequestDispatcher("contactServlet").forward(req, resp);
+        
+        
+        
+        
+        /*String action = req.getParameter("action");
 
         // afficher tous les contacts
         // afficher un contact par id
@@ -38,7 +44,7 @@ public class ContactServlet extends HttpServlet {
             this.index(req, resp);
         } else {
             this.show(req, resp);
-        }
+        }*/
     }
 
     @Override
