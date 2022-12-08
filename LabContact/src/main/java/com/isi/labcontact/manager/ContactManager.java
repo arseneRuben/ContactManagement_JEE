@@ -68,25 +68,33 @@ public class ContactManager extends Manager {
     }
 
     public static Contact findById(int id) {
-        ContactManager.contacts = ContactManager.findAll();
         Contact output = null;
-        Iterator it = ContactManager.contacts.iterator();
-        while (it.hasNext()) {
-            output = (Contact) it.next();
-            if (output.getId() == id) {
-                break;
+        String query = "SELECT * FROM contacts WHERE id = ?;";
+        try {
+            connexion = DriverManager.getConnection(urlServeur, username, password);
+            PreparedStatement ps = connexion.prepareStatement(query);
+            ps.setInt(1, id);
+            ResultSet result = ps.executeQuery();
+            if (result.next() == true) {
+                String name = result.getString("name");
+                output = new Contact(id, name);
+                output.setEmails(EmailManager.findByContact(id));
+               // output.setPhoneNumbers(EmailManager.findByContact(id));
+
             }
+            if (connexion != null) {
+                connexion.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return output;
     }
 
     public static void main(String args[]) {
-        Contact c = ContactManager.findById(2);
-        System.out.print(c);
-        c.setName("Simom");
-        ContactManager.update(c);
-        c = ContactManager.findById(2);
-        System.out.print(c);
+        // Contact c = ContactManager.findById(1);
+
+        System.out.print(ContactManager.findById(1));
 
     }
 
@@ -98,6 +106,54 @@ public class ContactManager extends Manager {
             PreparedStatement ps = connexion.prepareStatement(query);
             ps.setString(1, c.getName());
             ps.setInt(2, c.getId());
+            result = ps.executeUpdate();
+            if (!c.getEmails().isEmpty()) {
+                Contact fromBd = ContactManager.findById(c.getId());
+                //deletion of instances of emails retalted to  the contact  in the database
+                for (Email email : fromBd.getEmails()) {
+                    EmailManager.delete(email);
+                }
+                // inserting the new email list into the database
+                for (Email email : c.getEmails()) {
+                    EmailManager.insert(email);
+                }
+            }
+
+            if (connexion != null) {
+                connexion.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return result;
+    }
+
+    public static int delete(Contact c) {
+        int result = -1;
+        String query = "DELETE FROM  contacts WHERE id=?;";
+        try {
+            connexion = DriverManager.getConnection(urlServeur, username, password);
+            PreparedStatement ps = connexion.prepareStatement(query);
+            ps.setInt(1, c.getId());
+            result = ps.executeUpdate();
+            if (connexion != null) {
+                connexion.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
+    public static int insert(Contact c) {
+        int result = -1;
+        String query = "INSERT  INTO  contacts(id, name)  VALUES  id=?, name=? ;";
+        try {
+            connexion = DriverManager.getConnection(urlServeur, username, password);
+            PreparedStatement ps = connexion.prepareStatement(query);
+            ps.setInt(1, c.getId());
+            ps.setString(2, c.getName());
             result = ps.executeUpdate();
             if (connexion != null) {
                 connexion.close();

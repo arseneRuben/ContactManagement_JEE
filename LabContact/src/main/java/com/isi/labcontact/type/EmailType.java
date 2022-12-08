@@ -9,5 +9,18 @@ package com.isi.labcontact.type;
  * @author isi
  */
 public enum EmailType {
-    PERSONNAL,PROFESSIONNAL
+    PERSONNAL("PERSONNEL"),PROFESSIONNAL("PROFESSIONNEL");
+    
+    private final String label;
+    
+    private EmailType(String label){
+        this.label =label;
+    }
+    
+    public String getLabel(){
+        return this.label;
+    }
+    
+    
+    
 }

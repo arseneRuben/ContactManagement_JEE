@@ -4,16 +4,17 @@
  */
 package com.isi.labcontact.manager;
 
+import com.isi.labcontact.entity.Contact;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 /**
  *
  * @author isi
  */
 public abstract class Manager {
-
     protected static String dbName="contactdb";
     protected static String urlServeur = "jdbc:mariadb://localhost:3306/" + dbName;
     protected static String username = "root";
@@ -22,5 +23,7 @@ public abstract class Manager {
     protected  PreparedStatement statement;
     protected  ResultSet result;
     protected String query;
+    
+   
 
 }

@@ -11,6 +11,7 @@ import com.isi.labcontact.type.EmailType;
  * @author isi
  */
 public class Email {
+
     private int id;
     private String adress;
     private int contactId;
@@ -44,11 +45,24 @@ public class Email {
         return type;
     }
 
+    public static EmailType getType(String str) {
+        EmailType output = null;
+        switch (str) {
+            case "PERSONNEL":
+                output = EmailType.PERSONNAL;
+                break;
+            case "PROFESSIONNEL":
+                output = EmailType.PROFESSIONNAL;
+                break;
+        }
+        return output;
+    }
+
     public void setType(EmailType type) {
         this.type = type;
     }
 
-    public Email(int id, String adress, int contactId, EmailType type) {
+    public Email(int id, String adress, EmailType type, int contactId) {
         this.id = id;
         this.adress = adress;
         this.contactId = contactId;
@@ -60,8 +74,5 @@ public class Email {
         this.contactId = contactId;
         this.type = type;
     }
-    
-    
-    
-}
 
+}
