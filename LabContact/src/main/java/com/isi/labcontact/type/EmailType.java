@@ -9,7 +9,7 @@ package com.isi.labcontact.type;
  * @author isi
  */
 public enum EmailType {
-    PERSONNAL("PERSONNEL"),PROFESSIONNAL("PROFESSIONNEL");
+    PERSONNAL("Personnel"),PROFESSIONNAL("Professionnel");
     
     private final String label;
     
