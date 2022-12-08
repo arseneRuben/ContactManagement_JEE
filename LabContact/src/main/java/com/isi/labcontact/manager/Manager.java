@@ -24,6 +24,8 @@ public abstract class Manager {
     protected  ResultSet result;
     protected String query;
     
+    
+    
    
 
 }
