@@ -22,9 +22,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "ContactServlet", urlPatterns = {"/contactServlet"})
 public class ContactServlet extends HttpServlet {
 
-    List<PhoneNumber> phoneNumbers;
-
-    List<Email> emails;
+ 
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -98,12 +96,12 @@ public class ContactServlet extends HttpServlet {
         String email = req.getParameter("courriel");
         String emailType = req.getParameter("typeCourriel");
         String phoneType = req.getParameter("typePhone");
-        Contact contact = new Contact(id, name, phoneNumbers, emails);
+        Contact contact = new Contact(id, name, "", "");
     }
 
     protected void addPhoneNumber(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(true);
-        List<Email> emails = (ArrayList<Email>) session.getAttribute("emails");
+        List<Email> emails = new ArrayList<>(); 
         int emailId = parseInt(req.getParameter("id"));
         String email = req.getParameter("courriel");
         String emailType = req.getParameter("typeCourriel");
@@ -119,11 +117,12 @@ public class ContactServlet extends HttpServlet {
         }
         Email e = new Email(emailId, email, contactId, type);
         emails.add(e);
+        session.setAttribute("emails",emails);
     }
 
     protected void addEmail(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(true);
-        List<PhoneNumber> phoneNumbers = (ArrayList<PhoneNumber>) session.getAttribute("phoneNumbers");
+        List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
         int phoneNumberId = parseInt(req.getParameter("id"));
         String phoneNumber = req.getParameter("phone");
         String phoneNumberType = req.getParameter("typePhoneNumber");
@@ -142,5 +141,6 @@ public class ContactServlet extends HttpServlet {
         }
         PhoneNumber phone = new PhoneNumber(phoneNumber, contactId, type);
         phoneNumbers.add(phone);
+        session.setAttribute(";phoneNumbers",phoneNumbers);
     }
 }
