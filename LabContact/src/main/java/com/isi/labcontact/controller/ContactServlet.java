@@ -4,6 +4,8 @@ import com.isi.labcontact.entity.Contact;
 import com.isi.labcontact.entity.Email;
 import com.isi.labcontact.entity.PhoneNumber;
 import com.isi.labcontact.manager.ContactManager;
+import com.isi.labcontact.type.EmailType;
+import com.isi.labcontact.type.PhoneNumberType;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
 import java.util.ArrayList;
@@ -20,25 +22,20 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "ContactServlet", urlPatterns = {"/contactServlet"})
 public class ContactServlet extends HttpServlet {
 
-    HttpSession session;
     List<PhoneNumber> phoneNumbers;
+
     List<Email> emails;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
+
         String action = req.getParameter("action");
-        
+
         // afficher tous les contacts
-        
         // afficher un contact par id
-        
         // modifier un contact par id
-        
         // ajouter un nouveau contact
-        
-        
         if (req.getParameter("nom") != null) {
             this.index(req, resp);
         } else {
@@ -49,26 +46,19 @@ public class ContactServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String action = request.getParameter("action");
-        
-        if("deleteContact".equals(action)){
-        //supprimer un contact par id
-        
+
+        if ("deleteContact".equals(action)) {
+            //supprimer un contact par id
+
+        } else if ("editContactName".equals(action)) {
+            //ajouter le nom du contact dans la session
         }
-        else if("editContactName".equals(action)){
-        //ajouter le nom du contact dans la session
-        }
-        
-        
-        
-        
+
         //ajouter un email dans la session
-        
         //ajouter un telephone dans la session        
-        
         //sauvegarder le contact en session dans la base de donnees
-        
         String name = request.getParameter("nom");
         String email = request.getParameter("courriel");
         String emailType = request.getParameter("typeCourriel");
@@ -76,19 +66,10 @@ public class ContactServlet extends HttpServlet {
 
     }
 
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        this.phoneNumbers = new ArrayList<PhoneNumber>();
-        this.emails = new ArrayList<Email>();
-        session.setAttribute("phoneNumbers", this.phoneNumbers);
-        session.setAttribute("phoneNumbers", this.emails);
-    }
-
     protected void index(HttpServletRequest req, HttpServletResponse resp) {
         if (ContactManager.findAll() != null) {
             List<Contact> contacts;
-            this.session = req.getSession(true);
+            HttpSession session = req.getSession(true);
             contacts = ContactManager.findAll();
             session.setAttribute("contacts", contacts);
             try {
@@ -121,15 +102,45 @@ public class ContactServlet extends HttpServlet {
     }
 
     protected void addPhoneNumber(HttpServletRequest req, HttpServletResponse resp) {
-        List<Email> emails = (ArrayList<Email>) this.session.getAttribute("emails");
+        HttpSession session = req.getSession(true);
+        List<Email> emails = (ArrayList<Email>) session.getAttribute("emails");
         int emailId = parseInt(req.getParameter("id"));
         String email = req.getParameter("courriel");
         String emailType = req.getParameter("typeCourriel");
-        Email e = new Email(emailId, email, 2, emailType);
+        int contactId = 2;
+        EmailType type = null;
+        switch (emailType.toUpperCase()) {
+            case "PERSONNAL":
+                type = EmailType.PERSONNAL;
+                break;
+            case "PROFESSIONNAL":
+                type = EmailType.PROFESSIONNAL;
+                break;
+        }
+        Email e = new Email(emailId, email, contactId, type);
         emails.add(e);
     }
 
     protected void addEmail(HttpServletRequest req, HttpServletResponse resp) {
-        List<PhoneNumber> phoneNumbers = (ArrayList<PhoneNumber>) this.session.getAttribute("phoneNumbers");
+        HttpSession session = req.getSession(true);
+        List<PhoneNumber> phoneNumbers = (ArrayList<PhoneNumber>) session.getAttribute("phoneNumbers");
+        int phoneNumberId = parseInt(req.getParameter("id"));
+        String phoneNumber = req.getParameter("phone");
+        String phoneNumberType = req.getParameter("typePhoneNumber");
+        int contactId = 2;
+        PhoneNumberType type = null;
+        switch (phoneNumberType.toUpperCase()) {
+            case "WORK":
+                type = PhoneNumberType.WORK;
+                break;
+            case "HOUSE":
+                type = PhoneNumberType.HOUSE;
+                break;
+            case "CELL":
+                type = PhoneNumberType.CELL;
+                break;
+        }
+        PhoneNumber phone = new PhoneNumber(phoneNumber, contactId, type);
+        phoneNumbers.add(phone);
     }
 }
