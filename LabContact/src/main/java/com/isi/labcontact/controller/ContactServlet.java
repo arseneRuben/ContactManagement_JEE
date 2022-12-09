@@ -4,6 +4,7 @@ import com.isi.labcontact.entity.Contact;
 import com.isi.labcontact.entity.Email;
 import com.isi.labcontact.entity.PhoneNumber;
 import com.isi.labcontact.manager.ContactManager;
+import com.isi.labcontact.manager.EmailManager;
 import com.isi.labcontact.type.EmailType;
 import com.isi.labcontact.type.PhoneNumberType;
 import java.io.IOException;
@@ -97,21 +98,24 @@ public class ContactServlet extends HttpServlet {
     }
 
     protected void updateContact(HttpServletRequest req, HttpServletResponse resp) {
-        int id = parseInt(req.getParameter("id"));
+        HttpSession session = req.getSession(true);
+        Contact contact = (Contact)session.getAttribute("contact");
+        
         String name = req.getParameter("nom");
-        String email = req.getParameter("courriel");
-        String emailType = req.getParameter("typeCourriel");
-        String phoneType = req.getParameter("typePhone");
-        Contact contact = new Contact(id, name, "", "");
+        contact.setName(name);
+        contact.setEmails((ArrayList<Email>)session.getAttribute("emails"));
+        contact.setPhoneNumbers((ArrayList<PhoneNumber>)session.getAttribute("phones"));
+        
     }
 
-    protected void addPhoneNumber(HttpServletRequest req, HttpServletResponse resp) {
+    protected void addEmail(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(true);
-        List<Email> emails = new ArrayList<>(); 
-        int emailId = parseInt(req.getParameter("id"));
+        
+        Contact contact=(Contact)session.getAttribute("contact");
+        ArrayList<Email> emails =(ArrayList<Email>)contact.getEmails();
+        
         String email = req.getParameter("courriel");
         String emailType = req.getParameter("typeCourriel");
-        int contactId = 2;
         EmailType type = null;
         switch (emailType.toUpperCase()) {
             case "PERSONNAL":
@@ -121,18 +125,24 @@ public class ContactServlet extends HttpServlet {
                 type = EmailType.PROFESSIONNAL;
                 break;
         }
-        Email e = new Email(emailId, email, contactId, type);
+        Email e = new Email(email, contact.getId(), type);
         emails.add(e);
-        session.setAttribute("emails",emails);
+        contact.setEmails(emails);
+        session.setAttribute("contact",contact);
     }
 
-    protected void addEmail(HttpServletRequest req, HttpServletResponse resp) {
+    protected void addPhoneNumber(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(true);
-        List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
-        int phoneNumberId = parseInt(req.getParameter("id"));
+    
+        Contact contact=(Contact)session.getAttribute("contact");
+       // PhoneNumber phoneNumber;
+        ArrayList<PhoneNumber> phones =(ArrayList<PhoneNumber>)contact.getPhoneNumbers();
+        //phones.add(phoneNumber);
+      //  contact.setPhoneNumbers(phones);
+       // session.setAttribute("contact", contact);
+      
         String phoneNumber = req.getParameter("phone");
         String phoneNumberType = req.getParameter("typePhoneNumber");
-        int contactId = 2;
         PhoneNumberType type = null;
         switch (phoneNumberType.toUpperCase()) {
             case "WORK":
@@ -145,8 +155,9 @@ public class ContactServlet extends HttpServlet {
                 type = PhoneNumberType.CELL;
                 break;
         }
-        PhoneNumber phone = new PhoneNumber(phoneNumber, contactId, type);
-        phoneNumbers.add(phone);
-        session.setAttribute(";phoneNumbers",phoneNumbers);
+        PhoneNumber phone = new PhoneNumber(phoneNumber, contact.getId(), type);
+        phones.add(phone);
+        contact.setPhoneNumbers(phones);
+        session.setAttribute("contact", contact);
     }
 }
