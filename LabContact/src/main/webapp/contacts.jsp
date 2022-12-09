@@ -42,7 +42,7 @@
         <div><label><%=c.getName()%></label></div>
       <%}%>
         
-        <label>on recois rien</label>
+        <label>on recois rien.</label>
         <%}%>
 
     </body>
