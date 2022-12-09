@@ -75,4 +75,9 @@ public class Email {
         this.type = type;
     }
 
+    @Override
+    public String toString() {
+        return "Email{" + "id=" + id + ", adress=" + adress + ", contactId=" + contactId + ", type=" + type + '}';
+    }
+    
 }

@@ -16,10 +16,10 @@ public class Contact {
 
     private int id;
     private String name;
-    private ArrayList<PhoneNumber> phoneNumbers;
-    private ArrayList<Email> emails;
+    private List<PhoneNumber> phoneNumbers;
+    private List<Email> emails;
 
-    public Contact(int id, String name, ArrayList<PhoneNumber> phoneNumbers, ArrayList<Email> emails) {
+    public Contact(int id, String name, List<PhoneNumber> phoneNumbers, List<Email> emails) {
         this.id = id;
         this.name = name;
         this.phoneNumbers = phoneNumbers;
@@ -28,18 +28,18 @@ public class Contact {
 
     public Contact(String name) {
         this.name = name;
-        this.phoneNumbers = new ArrayList<PhoneNumber>();
-        this.emails = new ArrayList<Email>();
+        this.phoneNumbers = new ArrayList<>();
+        this.emails = new ArrayList<>();
     }
 
     public Contact(int id, String name) {
         this.id = id;
         this.name = name;
-        this.phoneNumbers = new ArrayList<PhoneNumber>();
-        this.emails = new ArrayList<Email>();
+        this.phoneNumbers = new ArrayList<>();
+        this.emails = new ArrayList<>();
     }
 
-    public Contact(String name, ArrayList<PhoneNumber> phoneNumbers, ArrayList<Email> emails) {
+    public Contact(String name, List<PhoneNumber> phoneNumbers, List<Email> emails) {
         this.name = name;
         this.phoneNumbers = phoneNumbers;
         this.emails = emails;
@@ -57,7 +57,7 @@ public class Contact {
         return phoneNumbers;
     }
 
-    public void setPhoneNumbers(ArrayList<PhoneNumber> phoneNumbers) {
+    public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
     }
 
@@ -65,7 +65,7 @@ public class Contact {
         return emails;
     }
 
-    public void setEmails(ArrayList<Email> emails) {
+    public void setEmails(List<Email> emails) {
         this.emails = emails;
     }
 

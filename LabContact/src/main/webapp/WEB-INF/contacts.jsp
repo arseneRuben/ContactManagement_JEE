@@ -12,7 +12,7 @@
          pageEncoding="ISO-8859-1"%>
 
 <%
-    List<Contact> listContacts = (ArrayList<Contact>)request.getAttribute("contacts");
+    List<Contact> listContacts = (ArrayList<Contact>) request.getAttribute("contacts");
 //    Contact contactA = new Contact(1, "a");
 //    Contact contactB = new Contact(2, "b");
 //    Contact contactC = new Contact(3, "c");
@@ -34,16 +34,18 @@
     </head>
     <body>
         <h1>contacts</h1>
-        <p> Liste de contacts  <button>ajouter contact</button></p>
-        <%if (listContacts != null) {%>
-        <label>on recois la liste des contacts</label>
-        <% for(Contact c: listContacts){
-        %>
-        <div><label><%=c.getName()%></label></div>
-      <%}%>
-        
-        <label>on recois rien.</label>
+        <p> Liste de contacts  <a href='contact'>Ajouter un contact</a></p>
+        <%if (listContacts != null) {%>        
+        <% for (Contact c : listContacts) {%>
+
+        <div><a href="informations?id=<%=c.getId()%>"> - <%=c.getName()%></a><a href='contact?id=<%=c.getId() %>'>Modifier</a><button>Supprimer</button></div>
         <%}%>
+
+        <%} else {%>
+        <div>
+            <span>on recois rien.</span>
+        </div>
+        <% }%>
 
     </body>
 </html>

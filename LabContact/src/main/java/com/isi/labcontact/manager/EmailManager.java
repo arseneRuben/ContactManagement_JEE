@@ -6,11 +6,8 @@ package com.isi.labcontact.manager;
 
 import com.isi.labcontact.entity.Contact;
 import com.isi.labcontact.entity.Email;
-import static com.isi.labcontact.manager.Manager.connexion;
-import static com.isi.labcontact.manager.Manager.password;
-import static com.isi.labcontact.manager.Manager.urlServeur;
-import static com.isi.labcontact.manager.Manager.username;
 import com.isi.labcontact.type.EmailType;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,13 +23,14 @@ import java.util.logging.Logger;
  */
 public class EmailManager extends Manager {
 
-    private static ArrayList<Email> items = new ArrayList<>();
+    
 
     public static ArrayList<Email> findAll() {
+        ArrayList<Email> items = new ArrayList<>();
         String query = "select * from emails;";
         try {
-            connexion = DriverManager.getConnection(urlServeur, username, password);
-            PreparedStatement ps = connexion.prepareStatement(query);
+            Connection connection = Manager.getConnection();
+            PreparedStatement ps = Manager.getPreparedStatement(connection, query);
             ResultSet result = ps.executeQuery();
             while (result.next()) {
                 int id = result.getInt("id");
@@ -41,20 +39,21 @@ public class EmailManager extends Manager {
                 EmailType type = Email.getType(result.getString("type"));
                 items.add(new Email(id, address, type, contact_id));
             }
-            if (connexion != null) {
-                connexion.close();
-            }
+            Manager.closeConnection(connection);
         } catch (SQLException ex) {
             Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(EmailManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return items;
     }
 
     public static ArrayList<Email> findByContact(int contact_id) {
+        ArrayList<Email> items = new ArrayList<>();
         String query = "SELECT * FROM emails WHERE contact_id = ?;";
         try {
-            connexion = DriverManager.getConnection(urlServeur, username, password);
-            PreparedStatement ps = connexion.prepareStatement(query);
+            Connection connection = Manager.getConnection();
+            PreparedStatement ps = Manager.getPreparedStatement(connection, query);
             ps.setInt(1, contact_id);
             ResultSet result = ps.executeQuery();
             while (result.next()) {
@@ -63,16 +62,16 @@ public class EmailManager extends Manager {
                 EmailType type = Email.getType(result.getString("type"));
                 items.add(new Email(id, address, type, contact_id));
             }
-            if (connexion != null) {
-                connexion.close();
-            }
+            Manager.closeConnection(connection);
         } catch (SQLException ex) {
             Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(EmailManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return items;
     }
 
-    public static Contact findById(int id) {
+    /*public static Contact findById(int id) {
         EmailManager.items = EmailManager.findAll();
         Contact output = null;
         Iterator it = EmailManager.items.iterator();
@@ -83,62 +82,103 @@ public class EmailManager extends Manager {
             }
         }
         return output;
-    }
+    }*/
 
     public static int delete(Email email) {
+       
         int result = -1;
         String query = "DELETE FROM  emails WHERE id=?;";
         try {
-            connexion = DriverManager.getConnection(urlServeur, username, password);
-            PreparedStatement ps = connexion.prepareStatement(query);
+            Connection connection = Manager.getConnection();
+            PreparedStatement ps = Manager.getPreparedStatement(connection, query);
             ps.setInt(1, email.getId());
             result = ps.executeUpdate();
-            if (connexion != null) {
-                connexion.close();
-            }
+            Manager.closeConnection(connection);
         } catch (SQLException ex) {
             Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(EmailManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
 
     public static int update(Email email) {
+        
         int result = -1;
         String query = "UPDATE  emails SET address=?, contact_id=?, type=? WHERE id=?;";
         try {
-            connexion = DriverManager.getConnection(urlServeur, username, password);
-            PreparedStatement ps = connexion.prepareStatement(query);
+            Connection connection = Manager.getConnection();
+            PreparedStatement ps = Manager.getPreparedStatement(connection, query);
             ps.setString(1, email.getAdress());
             ps.setInt(2, email.getContactId());
             ps.setString(3, email.getType().getLabel());
             ps.setInt(4, email.getId());
             result = ps.executeUpdate();
-            if (connexion != null) {
-                connexion.close();
-            }
+            Manager.closeConnection(connection);
         } catch (SQLException ex) {
             Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(EmailManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
     
     public static int insert(Email email) {
+        
         int result = -1;
-        String query = "INSERT  INTO  email(id, address, contact_id, type)  VALUES  (?, ?, ?, ?) ;";
+        String query = "INSERT  INTO  emails(address, contact_id, type)  VALUES  (?, ?, ?) ;";
         try {
-            connexion = DriverManager.getConnection(urlServeur, username, password);
-            PreparedStatement ps = connexion.prepareStatement(query);
-            ps.setInt(1, email.getId());
-            ps.setString(2, email.getAdress());
-            ps.setInt(3, email.getContactId());
-            ps.setString(4, email.getType().getLabel());
+            Connection connection = Manager.getConnection();
+            PreparedStatement ps = Manager.getPreparedStatement(connection, query);            
+            ps.setString(1, email.getAdress());
+            ps.setInt(2, email.getContactId());
+            ps.setString(3, email.getType().getLabel());
             result = ps.executeUpdate();
-            if (connexion != null) {
-                connexion.close();
-            }
+            
+            ResultSet rs = ps.getGeneratedKeys();
+            while(rs.next()){
+                result = rs.getInt(1);
+            }            
+            Manager.closeConnection(connection);
         } catch (SQLException ex) {
             Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(EmailManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
+    }
+    
+    public static void main(String ... args){
+        /*ArrayList<Email> emails = EmailManager.findAll();
+        
+        for(Email e : emails){
+            System.out.println(e);
+        
+        }*/
+        
+        /*ArrayList<Email> emails = EmailManager.findByContact(12);
+        
+        for(Email e : emails){
+            System.out.println(e);        
+        }*/
+        
+        Email email = new Email("toto@toto.com", 12, EmailType.PERSONNAL);
+        
+        int newEmailId = EmailManager.insert(email);        
+        
+        email.setId(newEmailId);
+        
+        System.out.println("id newEmail = " + newEmailId);
+        
+        email.setAdress("titi@titi.com");
+        
+        int nbRows = EmailManager.update(email);
+        
+        System.out.println("nbRows Updated = " + nbRows);
+        
+        nbRows = EmailManager.delete(email);
+        
+        System.out.println("nbRows Deleted = " + nbRows);
+        
     }
 }

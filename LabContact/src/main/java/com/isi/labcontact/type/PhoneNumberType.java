@@ -9,15 +9,15 @@ package com.isi.labcontact.type;
  * @author isi
  */
 public enum PhoneNumberType {
-    HOUSE("Maison"), WORK("Travail"), CELL("Celulaire");
+    HOUSE("Maison"), WORK("Travail"), CELL("Cellulaire");
     
-     private final String label;
-    
-    private PhoneNumberType(String label){
-        this.label =label;
+    private final String label;
+
+    private PhoneNumberType(String label) {
+        this.label = label;
     }
-    
-    public String getLabel(){
+
+    public String getLabel() {
         return this.label;
     }
 }
