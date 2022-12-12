@@ -22,6 +22,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Création</title>
+        
+        
+        
     </head>
     <body>
         <h2>Contacts > Création</h2>
@@ -33,9 +36,11 @@
             <input type="submit" value="Enregistrer" />
         </form>
         <a href="contacts">Retour</a>
-
-        <input type='text' id="nom" name='nom' placeholder="Nom" value="<%= c.getName()%>" />
-
+        
+        <form method="post" action="contact">
+            <input type='text' id="nom" name='nom' placeholder="Nom" value="<%= c.getName()%>" onblur="this.closest('form').submit();" />
+            <input type='hidden' name="action" value="updateName" />            
+        </form>
         <h3>Téléphones</h3>
 
         <% for (PhoneNumber pn : c.getPhoneNumbers()) {%>

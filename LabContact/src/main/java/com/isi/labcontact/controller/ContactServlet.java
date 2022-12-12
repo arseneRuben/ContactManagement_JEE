@@ -128,6 +128,15 @@ public class ContactServlet extends HttpServlet {
                 ContactManager.update(c);      
                 request.getRequestDispatcher("WEB-INF/contact.jsp").forward(request, response);
             }
+        } else if("updateName".equals(action)){
+            HttpSession session = request.getSession(true);
+            if(session != null){
+                Contact c = (Contact)session.getAttribute("contact");
+                String name = request.getParameter("nom");                
+                c.setName(name);
+                session.setAttribute("contact", c);
+                request.getRequestDispatcher("WEB-INF/contact.jsp").forward(request, response);
+            }
         }
         
 
