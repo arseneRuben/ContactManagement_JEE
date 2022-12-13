@@ -66,7 +66,7 @@ public class ContactServlet extends HttpServlet {
                         Contact c = new Contact("");
                         session.setAttribute("contact", c);
                         req.getRequestDispatcher("WEB-INF/contact.jsp").forward(req, resp);
-                    }                    
+                    }
 
                 }
                 break;
@@ -92,53 +92,97 @@ public class ContactServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        
+
         if ("deleteContact".equals(action)) {
             //supprimer un contact par id
+
+            String contactId = request.getParameter("contactId");
+            if(contactId != null) {
+                int id = Integer.parseInt(contactId);
+                EmailManager.deleteByContactId(id);
+                ContactManager.delete(id);
+            }            
+            response.sendRedirect("contacts");
             
-        } else if ("editContactName".equals(action)) {
-            //ajouter le nom du contact dans la session
-        } else if("deleteEmail".equals(action)){
+        } else if ("addEmail".equals(action)) {
+
+            String emailErrorMessage = "";
             HttpSession session = request.getSession(true);
-            if(session != null){
+            if (session != null) {
+                Contact c = (Contact) session.getAttribute("contact");
+                String emailInput = request.getParameter("email");
+                String typeCourriel = request.getParameter("typeCourriel");
+                EmailType type = null;
+                switch (typeCourriel) {
+                    case "PERSONNAL":
+                        type = EmailType.PERSONNAL;
+                        break;
+                    case "PROFESSIONNAL":
+                        type = EmailType.PROFESSIONNAL;
+                        break;
+                    default:
+                        emailErrorMessage = "Select a valid email type.";
+                }
+
+                if (emailErrorMessage.equals("")) {
+                    Email email = new Email(emailInput, c.getId(), type);
+                    c.addEmail(email);
+                    session.setAttribute("contact", c);
+                }
+
+                request.setAttribute("emailErrorMessage", emailErrorMessage);
+                request.getRequestDispatcher("WEB-INF/contact.jsp").forward(request, response);
+            }
+
+        } else if ("deleteEmail".equals(action)) {
+            HttpSession session = request.getSession(true);
+            if (session != null) {
                 int id = Integer.parseInt(request.getParameter("id"));
-                Contact c = (Contact)session.getAttribute("contact");
-                
+                Contact c = (Contact) session.getAttribute("contact");
+
                 List<Email> emails = c.getEmails();
-                
-                Iterator<Email> iter = emails.iterator(); 
+
+                Iterator<Email> iter = emails.iterator();
                 boolean found = false;
                 while (iter.hasNext() && !found) {
                     Email e = iter.next();
-                    if(e.getId() == id){
+                    if (e.getId() == id) {
                         iter.remove();
                         found = true;
-                    }                    
+                    }
                 }
-                
+
                 c.setEmails(emails);
-                
+
                 session.setAttribute("contact", c);
                 request.getRequestDispatcher("WEB-INF/contact.jsp").forward(request, response);
             }
-        } else if("saveContact".equals(action)){
+        } else if ("saveContact".equals(action)) {
             HttpSession session = request.getSession(true);
-            if(session != null){
-                Contact c = (Contact)session.getAttribute("contact");
-                ContactManager.update(c);      
+            if (session != null) {
+                Contact c = (Contact) session.getAttribute("contact");
+                if (c.getId() == 0) {
+                    int idGerere = ContactManager.insert(c);
+                    c = ContactManager.findById(idGerere);
+                    session.setAttribute("contact", c);
+                    
+                    //response.sendRedirect("contacts");
+                } else {
+                    ContactManager.update(c);                    
+                }
                 request.getRequestDispatcher("WEB-INF/contact.jsp").forward(request, response);
+
             }
-        } else if("updateName".equals(action)){
+        } else if ("updateName".equals(action)) {
             HttpSession session = request.getSession(true);
-            if(session != null){
-                Contact c = (Contact)session.getAttribute("contact");
-                String name = request.getParameter("nom");                
+            if (session != null) {
+                Contact c = (Contact) session.getAttribute("contact");
+                String name = request.getParameter("nom");
                 c.setName(name);
                 session.setAttribute("contact", c);
                 request.getRequestDispatcher("WEB-INF/contact.jsp").forward(request, response);
             }
         }
-        
 
         //ajouter un email dans la session
         //ajouter un telephone dans la session        

@@ -76,7 +76,11 @@ public class Contact {
     public void setId(int id) {
         this.id = id;
     }
-
+    
+    public void addEmail(Email email){
+        this.emails.add(email);
+    }
+    
     @Override
     public String toString() {
         return this.id + " " + this.name + " " + this.phoneNumbers.size() + " " + this.emails.size();

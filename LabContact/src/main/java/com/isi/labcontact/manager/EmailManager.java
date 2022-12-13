@@ -101,7 +101,25 @@ public class EmailManager extends Manager {
         }
         return result;
     }
-
+    
+    public static int deleteByContactId(int contactId) {
+       
+        int result = -1;
+        String query = "DELETE FROM emails WHERE contact_id=?;";
+        try {
+            Connection connection = Manager.getConnection();
+            PreparedStatement ps = Manager.getPreparedStatement(connection, query);
+            ps.setInt(1, contactId);
+            result = ps.executeUpdate();
+            Manager.closeConnection(connection);
+        } catch (SQLException ex) {
+            Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(EmailManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
     public static int update(Email email) {
         
         int result = -1;

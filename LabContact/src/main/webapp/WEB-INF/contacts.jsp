@@ -38,7 +38,14 @@
         <%if (listContacts != null) {%>        
         <% for (Contact c : listContacts) {%>
 
-        <div><a href="informations?id=<%=c.getId()%>"> - <%=c.getName()%></a><a href='contact?id=<%=c.getId() %>'>Modifier</a><button>Supprimer</button></div>
+        <div>
+            <a href="informations?id=<%=c.getId()%>"> - <%=c.getName()%></a><a href='contact?id=<%=c.getId() %>'>Modifier</a>
+            <form method="post" action="contact">
+                <input type="hidden" name="action" value="deleteContact" />
+                <input type="hidden" name="contactId" value="<%= c.getId() %>" />
+                <input type="submit" value="Supprimer" />
+            </form>
+        </div>
         <%}%>
 
         <%} else {%>

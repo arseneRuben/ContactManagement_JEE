@@ -123,12 +123,16 @@ public class ContactManager extends Manager {
     }
 
     public static int delete(Contact c) {
+        return delete(c.getId());
+    }
+    
+    public static int delete(int id) {
         int result = -1;
         String query = "DELETE FROM  contacts WHERE id=?;";
         try {
             Connection connection = Manager.getConnection();
             PreparedStatement ps = Manager.getPreparedStatement(connection, query);
-            ps.setInt(1, c.getId());
+            ps.setInt(1, id);
             result = ps.executeUpdate();
             Manager.closeConnection(connection);
         } catch (SQLException ex) {
@@ -152,7 +156,15 @@ public class ContactManager extends Manager {
             while (rs.next()) {
                 result = rs.getInt(1);
             }
-
+            
+            if (!c.getEmails().isEmpty()) {
+                // inserting the new email list into the database
+                for (Email email : c.getEmails()) {
+                    email.setContactId(result);
+                    EmailManager.insert(email);
+                }
+            }
+            
             Manager.closeConnection(connection);
         } catch (SQLException ex) {
             Logger.getLogger(ContactManager.class.getName()).log(Level.SEVERE, null, ex);
